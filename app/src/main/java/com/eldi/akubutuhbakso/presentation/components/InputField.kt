@@ -9,24 +9,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-@Preview(
-    showBackground = true
-)
 @Composable
 fun InputField(
     modifier: Modifier = Modifier,
     title: String = "Title placeholder",
     text: String = "",
     placeholder: String = "Placeholder",
-    onTextChange: (String) -> Unit = {}
+    onTextChange: (String) -> Unit = {},
 ) {
     Column(modifier = modifier) {
         Text(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), color = Color(0xFF001A41),
-            text = title
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            color = Color(0xFF001A41),
+            text = title,
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -37,8 +34,8 @@ fun InputField(
             },
             colors = OutlinedTextFieldDefaults.colors().copy(
                 focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.LightGray
-            )
+                unfocusedIndicatorColor = Color.LightGray,
+            ),
         )
     }
 }

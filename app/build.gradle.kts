@@ -39,6 +39,10 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    lint {
+        baseline = file("lint-baseline.xml")
     }
     secrets {
         // To add your Maps API key to this project:
@@ -69,7 +73,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.maps.compose)
-//    implementation(libs.androidx.google.fonts)
+    lintChecks(libs.compose.lint.checks)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,4 +81,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

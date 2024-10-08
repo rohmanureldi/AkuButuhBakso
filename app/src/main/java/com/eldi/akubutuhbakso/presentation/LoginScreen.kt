@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,26 +32,33 @@ import com.eldi.akubutuhbakso.presentation.components.InputField
 import com.eldi.akubutuhbakso.ui.theme.AkuButuhBaksoTheme
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(0xFFEFF1F4))
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFEFF1F4)),
     ) {
-
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Image(
                 modifier = Modifier.fillMaxWidth(),
                 painter = painterResource(R.drawable.ic_login),
-                contentDescription = "LoginMascot"
+                contentDescription = "LoginMascot",
             )
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("Registrasi", color = Color(0xFF001A41), style = MaterialTheme.typography.titleLarge)
+                Text(
+                    "Registrasi",
+                    color = Color(0xFF001A41),
+                    style = MaterialTheme.typography.titleLarge,
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Masukkan nama dan role Anda dibawah ini", color = Color(0xFF001A41))
             }
@@ -63,36 +68,38 @@ fun LoginScreen() {
                     .fillMaxWidth()
                     .padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(width = 1.dp, color = Color(0x80FFFFFF))
+                border = BorderStroke(width = 1.dp, color = Color(0x80FFFFFF)),
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
                             horizontal = 16.dp,
-                            vertical = 16.dp
+                            vertical = 16.dp,
                         ),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     InputField(
                         modifier = Modifier.fillMaxWidth(),
                         title = "Nama",
-                        placeholder = "Masukkan nama"
+                        placeholder = "Masukkan nama",
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     InputField(
                         modifier = Modifier.fillMaxWidth(),
                         title = "Role",
-                        placeholder = "Masukkan Role"
+                        placeholder = "Masukkan Role",
                     )
 
                     Button(
                         onClick = {},
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red
-                        )
+                            containerColor = Color.Red,
+                        ),
                     ) {
                         Text("Join")
                     }
@@ -100,7 +107,7 @@ fun LoginScreen() {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Checkbox(
                             modifier = Modifier.clip(RoundedCornerShape(12.dp)),
@@ -110,10 +117,9 @@ fun LoginScreen() {
 
                         Text(
                             text = "Dengan menggunakan aplikasi ini Anda telah setuju untuk membagikan lokasi Anda kepada para tukang Bakso Keliling.",
-                            style = MaterialTheme.typography.bodySmall
+                            style = MaterialTheme.typography.bodySmall,
                         )
                     }
-
                 }
             }
         }
@@ -121,7 +127,7 @@ fun LoginScreen() {
 }
 
 @Preview(
-    showBackground = true
+    showBackground = true,
 )
 @Composable
 private fun LoginPreview() {
