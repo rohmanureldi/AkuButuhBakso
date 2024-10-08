@@ -10,7 +10,7 @@ import com.eldi.akubutuhbakso.R
 private val poppinsFontFamily = FontFamily(
     Font(R.font.poppins, FontWeight.Normal),
     Font(R.font.poppins_bold, FontWeight.Bold),
-    Font(R.font.poppins_medium, FontWeight.Medium)
+    Font(R.font.poppins_medium, FontWeight.Medium),
 )
 
 // Create your typography styles
@@ -18,76 +18,76 @@ val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 57.sp
+        fontSize = 57.sp,
     ),
     displayMedium = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 45.sp
+        fontSize = 45.sp,
     ),
     displaySmall = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 36.sp
+        fontSize = 36.sp,
     ),
     headlineLarge = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp
+        fontSize = 32.sp,
     ),
     headlineMedium = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 28.sp
+        fontSize = 28.sp,
     ),
     headlineSmall = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 24.sp
+        fontSize = 24.sp,
     ),
     titleLarge = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
+        fontSize = 22.sp,
     ),
     titleMedium = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 18.sp
+        fontSize = 18.sp,
     ),
     titleSmall = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
+        fontSize = 16.sp,
     ),
     bodyLarge = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 16.sp,
     ),
     bodyMedium = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+        fontSize = 14.sp,
     ),
     bodySmall = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 12.sp,
     ),
     labelLarge = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp
+        fontSize = 14.sp,
     ),
     labelMedium = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp
+        fontSize = 12.sp,
     ),
     labelSmall = TextStyle(
         fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp
-    )
+        fontSize = 11.sp,
+    ),
 )
