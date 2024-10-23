@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Aku Butuh Bakso</string>
+    <string name="label_registration">Registrasi</string>
+    <string name="label_input_name_and_role">Masukkan nama dan role Anda dibawah ini</string>
+    <string name="label_name">Nama</string>
+    <string name="label_input_name">Masukkan nama</string>
+    <string name="label_role">Role</string>
+    <string name="label_input_role">Masukkan Role</string>
+    <string name="label_join">Join</string>
+    <string name="label_tnc_desc">Dengan menggunakan aplikasi ini Anda telah setuju untuk membagikan lokasi Anda kepada para tukang Bakso Keliling.</string>
 </resources>

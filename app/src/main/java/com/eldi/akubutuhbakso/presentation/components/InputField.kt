@@ -9,7 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.eldi.akubutuhbakso.ui.theme.Paddings
+import com.eldi.akubutuhbakso.ui.theme.textBlack
 
 @Composable
 fun InputField(
@@ -21,8 +22,8 @@ fun InputField(
 ) {
     Column(modifier = modifier) {
         Text(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            color = Color(0xFF001A41),
+            modifier = Modifier.fillMaxWidth().padding(bottom = Paddings.small),
+            color = textBlack,
             text = title,
         )
         OutlinedTextField(
