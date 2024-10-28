@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.eldi.akubutuhbakso.presentation.LoginScreen
@@ -18,7 +19,9 @@ class MainActivity : ComponentActivity() {
             AkuButuhBaksoTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     innerPadding
-                    LoginScreen()
+                    LoginScreen(
+                        modifier = Modifier.imePadding(),
+                    )
                 }
             }
         }
