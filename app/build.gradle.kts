@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -64,6 +65,10 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.constraintlayout.compose)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 
     lintChecks(libs.compose.lint.checks)
     testImplementation(libs.junit)

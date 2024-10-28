@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "355536789845",
+    "project_id": "aku-butuh-bakso",
+    "storage_bucket": "aku-butuh-bakso.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355536789845:android:be93ca4336cfb8e4118fdc",
+        "android_client_info": {
+          "package_name": "com.eldi.akubutuhbakso"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiSQJufbIaqSoTJv7UY3mMHtXuYS1NbjI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
