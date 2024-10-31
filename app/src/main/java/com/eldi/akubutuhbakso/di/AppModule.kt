@@ -1,13 +1,8 @@
 package com.eldi.akubutuhbakso.di
 
-import com.eldi.akubutuhbakso.BuildConfig
-import com.google.firebase.database.FirebaseDatabase
-import org.koin.dsl.module
+import com.eldi.akubutuhbakso.data.di.appDataModule
+import com.eldi.akubutuhbakso.domain.di.appDomainModule
+import com.eldi.akubutuhbakso.presentation.di.appPresentationModule
+import com.eldi.akubutuhbakso.service.di.serviceModule
 
-private val firebaseRealtimeDbModule = module {
-    single {
-        FirebaseDatabase.getInstance(BuildConfig.FIREBASE_REALTIME_URL)
-    }
-}
-
-val appModule = listOf(firebaseRealtimeDbModule)
+val appModule = appDataModule + appPresentationModule + serviceModule + appDomainModule

@@ -1,4 +1,4 @@
-package com.eldi.akubutuhbakso.presentation
+package com.eldi.akubutuhbakso.presentation.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -35,7 +36,10 @@ import com.eldi.akubutuhbakso.ui.theme.Borders
 import com.eldi.akubutuhbakso.ui.theme.Paddings
 import com.eldi.akubutuhbakso.ui.theme.textBlack
 import com.eldi.akubutuhbakso.ui.theme.tselDarkBlueContainerLight
+import com.eldi.akubutuhbakso.utils.locations.requestLocationPermissionLauncher
+import com.eldi.akubutuhbakso.utils.locations.requestLocationPermissions
 import kotlinx.collections.immutable.toPersistentList
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
@@ -83,6 +87,8 @@ private fun RegistrationIntro(
 
 @Composable
 private fun LoginForm(modifier: Modifier = Modifier) {
+    val vm = koinViewModel<LoginViewModel>()
+    val context = LocalContext.current
     val availableRoles = stringArrayResource(R.array.user_roles).toPersistentList()
     var selectedRole: String by remember {
         mutableStateOf(availableRoles[0])
@@ -98,6 +104,22 @@ private fun LoginForm(modifier: Modifier = Modifier) {
 
     var isTncChecked by remember {
         mutableStateOf(false)
+    }
+
+    val launcher = requestLocationPermissionLauncher {
+        // TODO: Go To Map Screen
+    }
+
+    val onLoginClick = remember {
+        {
+            requestLocationPermissions(
+                context = context,
+                launcher = launcher,
+                onGranted = {
+                    // TODO: Go To Map Screen
+                },
+            )
+        }
     }
 
     Surface(
@@ -135,9 +157,7 @@ private fun LoginForm(modifier: Modifier = Modifier) {
             )
 
             Button(
-                onClick = {
-                    // TODO: To map activity
-                },
+                onClick = onLoginClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = Paddings.medium),

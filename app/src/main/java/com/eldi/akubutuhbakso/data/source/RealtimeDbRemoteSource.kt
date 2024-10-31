@@ -1,44 +1,50 @@
 package com.eldi.akubutuhbakso.data.source
 
 import android.util.Log
-import com.eldi.akubutuhbakso.BuildConfig
-import com.google.firebase.Firebase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.database
-import com.google.firebase.database.getValue
+import com.eldi.akubutuhbakso.data.mapper.UserDataMapper
+import com.eldi.akubutuhbakso.data.model.UserDataResponse
+import com.eldi.akubutuhbakso.service.WsClient
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class RealtimeDbRemoteSource : LocationShareRemoteSource {
+class RealtimeDbRemoteSource(
+    private val db: FirebaseDatabase,
+    private val wsClient: WsClient,
+) : LocationShareRemoteSource {
     private val TAG = "FirestoreRemoteSource"
 
     override suspend fun updateLocation() {
-        val database = Firebase.database(BuildConfig.FIREBASE_REALTIME_URL)
-        val myRef = database.getReference("message")
+        Log.e(TAG, "updateLocation: ")
+        runCatching {
+            val myRef = db.getReference("message")
 
-        myRef.setValue("Hello, World!")
+            myRef.setValue("Hello, World!")
+        }.getOrElse {
+            Log.e(TAG, "updateLocation: ", it)
+        }
     }
 
-    override suspend fun fetchAllSellerLocation(): Flow<String?> = callbackFlow {
-        val database = Firebase.database
-
-        val myRef = database.getReference("message")
-
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val value = dataSnapshot.getValue<String>()
-                Log.d(TAG, "Value is: $value")
-
-                trySend(value)
+    override suspend fun fetchAllSellerLocation(): Flow<List<UserDataResponse>> = callbackFlow {
+        val socketListener = object : WsClient.LocationShareSocketListener {
+            override fun onOpen() {
+                super.onOpen()
+                wsClient.requestListenToSeller()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException())
+            override fun onMessage(message: String) {
+                super.onMessage(message)
+                Log.e(TAG, "onMessage: $message")
+                val mapped = UserDataMapper.parseFromWsMessage(message)
+
+                trySend(mapped)
             }
-        })
+        }
+
+        wsClient.connect(socketListener)
+
+        awaitClose { wsClient.disconnect() }
     }
 
     override suspend fun fetchAllBuyerLocation() {

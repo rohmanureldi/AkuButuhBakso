@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.android
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -6,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlinx-serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.gms.google-services")
 }
@@ -32,6 +32,12 @@ android {
 
         val realtimeDbUrl = localProperties.getProperty("FIREBASE_REALTIME_URL")
         buildConfigField("String", "FIREBASE_REALTIME_URL", "\"$realtimeDbUrl\"")
+
+        val realtimeDbProjectId = localProperties.getProperty("FIREBASE_REALTIME_PROJECT_ID")
+        buildConfigField("String", "FIREBASE_REALTIME_PROJECT_ID", "\"$realtimeDbProjectId\"")
+
+        val realtimeDbHost = localProperties.getProperty("FIREBASE_REALTIME_HOST")
+        buildConfigField("String", "FIREBASE_REALTIME_HOST", "\"$realtimeDbHost\"")
     }
 
     buildTypes {
@@ -74,7 +80,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.maps.compose)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.constraintlayout.compose)
 
@@ -86,6 +91,15 @@ dependencies {
     // Koin
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+
+    // Maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
+
+    // OkHttp
+    implementation(libs.okhttp)
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     lintChecks(libs.compose.lint.checks)
     testImplementation(libs.junit)
