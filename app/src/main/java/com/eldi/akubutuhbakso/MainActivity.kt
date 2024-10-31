@@ -4,11 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import com.eldi.akubutuhbakso.presentation.login.LoginScreen
+import androidx.navigation.compose.rememberNavController
+import com.eldi.akubutuhbakso.presentation.navigation.AppNavigation
 import com.eldi.akubutuhbakso.ui.theme.AkuButuhBaksoTheme
 
 class MainActivity : ComponentActivity() {
@@ -16,13 +13,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
             AkuButuhBaksoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    innerPadding
-                    LoginScreen(
-                        modifier = Modifier.fillMaxSize().imePadding(),
-                    )
-                }
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    innerPadding
+//                    LoginScreen(
+//                        modifier = Modifier.fillMaxSize().imePadding().statusBarsPadding(),
+//                    )
+//                }
+                AppNavigation(
+                    navController = navController,
+                )
             }
         }
     }

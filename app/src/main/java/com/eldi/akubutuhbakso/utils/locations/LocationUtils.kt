@@ -2,10 +2,9 @@ package com.eldi.akubutuhbakso.utils.locations
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.PackageManager
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,37 +13,46 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.eldi.akubutuhbakso.utils.findActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.Priority
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 
-private fun Context.checkLocationPermission() {
-//    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-//        != PackageManager.PERMISSION_GRANTED) {
-//        ActivityCompat.requestPermissions(
-//            this,
-//            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-//            LOCATION_PERMISSION_REQUEST_CODE
-//        )
-//    } else {
-//        startListeningForLocationUpdates()
-//    }
+@SuppressLint("MissingPermission")
+private fun listenToLocationChange(
+    locationProvider: FusedLocationProviderClient,
+    updateOnce: Boolean,
+) = callbackFlow {
+    val locationRequest = LocationRequest.Builder(
+        Priority.PRIORITY_HIGH_ACCURACY,
+        5000L,
+    ).setMaxUpdates(if (updateOnce) 1 else Integer.MAX_VALUE)
+        .build()
+
+    val locationCallback = LocationListener {
+        trySend(it)
+    }
+
+    locationProvider.requestLocationUpdates(
+        locationRequest,
+        locationCallback,
+        Looper.getMainLooper(),
+    )
+
+    awaitClose {
+        locationProvider.removeLocationUpdates(locationCallback)
+        channel.close()
+    }
 }
 
 @SuppressLint("MissingPermission")
-private fun startListeningForLocationUpdates(context: Context) {
-//    val locationRequest = LocationRequest().apply {
-//        interval = 10000 // Update interval in milliseconds
-//        fastestInterval = 5000
-//        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//    }
-//    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-//    fusedLocationClient.lastLocation.addOnSuccessListener {
-//        it?.latitude
-//    }
-//    fusedLocationClient.requestLocationUpdates(
-//        locationRequest,
-//        locationCallback,
-//        Looper.getMainLooper()
-//    )
-}
+suspend fun getCurrentLocation(
+    locationProvider: FusedLocationProviderClient,
+) = listenToLocationChange(locationProvider = locationProvider, updateOnce = true).first()
 
 @Composable
 inline fun requestLocationPermissionLauncher(
@@ -57,7 +65,11 @@ inline fun requestLocationPermissionLauncher(
             if (isGranted) {
                 onGranted()
             } else {
-                Toast.makeText(context, "Please allow location permission to continue", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Please allow location permission to continue",
+                    Toast.LENGTH_SHORT,
+                ).show()
             }
         },
     )
@@ -89,13 +101,4 @@ inline fun requestLocationPermissions(
             launcher.launch(permission)
         }
     }
-}
-
-fun Context.findActivity(): Activity {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    throw IllegalStateException("Permissions should be called in the context of an Activity")
 }

@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.eldi.akubutuhbakso.R
@@ -38,12 +37,13 @@ import com.eldi.akubutuhbakso.ui.theme.textBlack
 import com.eldi.akubutuhbakso.ui.theme.tselDarkBlueContainerLight
 import com.eldi.akubutuhbakso.utils.locations.requestLocationPermissionLauncher
 import com.eldi.akubutuhbakso.utils.locations.requestLocationPermissions
+import com.eldi.akubutuhbakso.utils.role.UserRole
 import kotlinx.collections.immutable.toPersistentList
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    onLoginClick: (UserRole) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
@@ -63,6 +63,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(Paddings.topHorizontal(Paddings.medium)),
+            onLoginClick = onLoginClick,
         )
     }
 }
@@ -86,11 +87,13 @@ private fun RegistrationIntro(
 }
 
 @Composable
-private fun LoginForm(modifier: Modifier = Modifier) {
-    val vm = koinViewModel<LoginViewModel>()
+private fun LoginForm(
+    modifier: Modifier = Modifier,
+    onLoginClick: (UserRole) -> Unit = {},
+) {
     val context = LocalContext.current
-    val availableRoles = stringArrayResource(R.array.user_roles).toPersistentList()
-    var selectedRole: String by remember {
+    val availableRoles = UserRole.entries.toPersistentList()
+    var selectedRole: UserRole by remember {
         mutableStateOf(availableRoles[0])
     }
     var userName by remember {
@@ -107,16 +110,16 @@ private fun LoginForm(modifier: Modifier = Modifier) {
     }
 
     val launcher = requestLocationPermissionLauncher {
-        // TODO: Go To Map Screen
+        onLoginClick(selectedRole)
     }
 
-    val onLoginClick = remember {
+    val onLoginAction = remember {
         {
             requestLocationPermissions(
                 context = context,
                 launcher = launcher,
                 onGranted = {
-                    // TODO: Go To Map Screen
+                    onLoginClick(selectedRole)
                 },
             )
         }
@@ -149,15 +152,16 @@ private fun LoginForm(modifier: Modifier = Modifier) {
             DropdownField(
                 modifier = Modifier.fillMaxWidth(),
                 label = stringResource(R.string.label_role),
-                options = availableRoles,
-                selectedOption = selectedRole,
+                options = availableRoles.map { it.value }.toPersistentList(),
+                selectedOption = selectedRole.value,
                 onOptionSelected = {
-                    selectedRole = it
+                    val role = UserRole.getRoleByStr(it)
+                    selectedRole = role
                 },
             )
 
             Button(
-                onClick = onLoginClick,
+                onClick = onLoginAction,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = Paddings.medium),
