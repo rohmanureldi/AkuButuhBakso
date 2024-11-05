@@ -10,6 +10,6 @@ val appPresentationModule = module {
         LoginViewModel(get())
     }
     viewModel {
-        MapViewModel(get(), get())
+        MapViewModel(get(), get(), get())
     }
 }

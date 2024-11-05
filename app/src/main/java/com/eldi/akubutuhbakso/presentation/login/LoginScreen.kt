@@ -43,7 +43,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginClick: (UserRole) -> Unit = {},
+    onLoginClick: (String, UserRole) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -89,7 +89,7 @@ private fun RegistrationIntro(
 @Composable
 private fun LoginForm(
     modifier: Modifier = Modifier,
-    onLoginClick: (UserRole) -> Unit = {},
+    onLoginClick: (String, UserRole) -> Unit,
 ) {
     val context = LocalContext.current
     val availableRoles = UserRole.entries.toPersistentList()
@@ -110,7 +110,7 @@ private fun LoginForm(
     }
 
     val launcher = requestLocationPermissionLauncher {
-        onLoginClick(selectedRole)
+        onLoginClick(userName, selectedRole)
     }
 
     val onLoginAction = remember {
@@ -119,7 +119,7 @@ private fun LoginForm(
                 context = context,
                 launcher = launcher,
                 onGranted = {
-                    onLoginClick(selectedRole)
+                    onLoginClick(userName, selectedRole)
                 },
             )
         }
@@ -202,6 +202,6 @@ private fun LoginForm(
 @Composable
 private fun LoginPreview() {
     AkuButuhBaksoTheme {
-        LoginScreen()
+        LoginScreen { _, _ -> }
     }
 }

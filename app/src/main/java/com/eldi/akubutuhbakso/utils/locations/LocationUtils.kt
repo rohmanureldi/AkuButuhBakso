@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 
 @SuppressLint("MissingPermission")
-private fun listenToLocationChange(
+fun listenToLocationChange(
     locationProvider: FusedLocationProviderClient,
-    updateOnce: Boolean,
+    updateOnce: Boolean = false,
 ) = callbackFlow {
     val locationRequest = LocationRequest.Builder(
         Priority.PRIORITY_HIGH_ACCURACY,

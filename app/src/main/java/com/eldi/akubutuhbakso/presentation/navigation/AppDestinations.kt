@@ -7,4 +7,7 @@ import kotlinx.serialization.Serializable
 data object LoginDestination
 
 @Serializable
-data class MapDestination(val userRole: UserRole)
+data class MapDestination(
+    val userName: String,
+    val userRole: UserRole,
+)

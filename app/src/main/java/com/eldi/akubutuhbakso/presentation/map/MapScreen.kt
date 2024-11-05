@@ -12,18 +12,19 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapScreen(
-//    userRole: UserRole,
     modifier: Modifier = Modifier,
 ) {
     val vm: MapViewModel = koinViewModel()
 
     val userLastLocation by vm.userLastLocation.collectAsStateWithLifecycle()
+    val allOnlineUsers by vm.onlineUsers.collectAsStateWithLifecycle()
 
     val userLocation by remember(userLastLocation) {
         val coord = userLastLocation?.let { LatLng(it.latitude, it.longitude) } ?: LatLng(0.0, 0.0)
@@ -49,6 +50,13 @@ fun MapScreen(
                 title = "User Location",
                 snippet = "You are here",
             )
+
+            allOnlineUsers.forEach {
+                Marker(
+                    state = MarkerState(position = it.coord),
+                    title = "${it.role} ${it.name}",
+                )
+            }
         }
     }
 }

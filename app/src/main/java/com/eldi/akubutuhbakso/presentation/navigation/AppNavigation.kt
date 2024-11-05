@@ -23,17 +23,23 @@ fun AppNavigation(
     ) {
         composable<LoginDestination> {
             LoginScreen(
-                modifier = Modifier.fillMaxSize().imePadding().statusBarsPadding(),
-                onLoginClick = {
-                    navController.navigate(route = MapDestination(it))
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+                    .statusBarsPadding(),
+                onLoginClick = { userName, userRole ->
+                    navController.navigate(
+                        route = MapDestination(
+                            userName = userName,
+                            userRole = userRole,
+                        ),
+                    )
                 },
             )
         }
         composable<MapDestination> {
-//            val args = it.toRoute<MapDestination>()
             MapScreen(
                 modifier = Modifier.fillMaxSize(),
-//                userRole = args.userRole
             )
         }
     }
