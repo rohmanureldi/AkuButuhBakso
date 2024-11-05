@@ -2,6 +2,8 @@ package com.eldi.akubutuhbakso.data.mapper
 
 import com.eldi.akubutuhbakso.data.model.UserDataResponse
 import com.eldi.akubutuhbakso.domain.models.UserData
+import com.eldi.akubutuhbakso.utils.role.UserRole
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -20,8 +22,26 @@ object UserDataMapper {
     }
 
     fun parseToUserData(data: List<UserDataResponse>): List<UserData> {
-        return data.map {
-            UserData(name = it.name, role = it.role, coord = it.coord)
+        return data.mapNotNull {
+            val latLng = runCatching {
+                it.coord?.split(",")?.let {
+                    val lat = it.first().toDoubleOrNull()
+                    val lng = it.last().toDoubleOrNull()
+
+                    if (lat == null || lng == null || it.size != 2) {
+                        return@let null
+                    }
+
+                    LatLng(lat, lng)
+                }
+            }.getOrNull()
+
+            if (latLng == null) return@mapNotNull null
+            if (it.name.isNullOrBlank() || it.role.isNullOrBlank()) return@mapNotNull null
+
+            val role = if (UserRole.valueOf(it.role) == UserRole.Buyer) "Pembeli" else "Penjual"
+
+            UserData(name = it.name, role = role, coord = latLng)
         }
     }
 

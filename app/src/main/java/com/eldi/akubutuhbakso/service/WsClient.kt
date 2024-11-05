@@ -3,6 +3,7 @@ package com.eldi.akubutuhbakso.service
 import android.util.Log
 import com.eldi.akubutuhbakso.data.model.FirebaseWsListenerRequest
 import com.eldi.akubutuhbakso.utils.defaultJson
+import com.eldi.akubutuhbakso.utils.role.UserRole
 import kotlinx.serialization.encodeToString
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +16,7 @@ class WsClient(
 ) {
     private lateinit var webSocket: okhttp3.WebSocket
     private var wsListener: LocationShareSocketListener? = null
-    private var shouldReconnect = true
+    private var shouldReconnect = false
 
     private fun initWebSocket() {
         Log.e("socketCheck", "initWebSocket() socketurl = $socketUrl")
@@ -32,7 +33,7 @@ class WsClient(
 
     fun connect(listener: LocationShareSocketListener) {
         Log.e("socketCheck", "connect()")
-        shouldReconnect = true
+        shouldReconnect = false
         wsListener = listener
         initWebSocket()
     }
@@ -42,8 +43,9 @@ class WsClient(
         initWebSocket()
     }
 
-    fun requestListenToSeller() {
-        val request = FirebaseWsListenerRequest("seller")
+    fun requestListen(role: UserRole) {
+        val request = FirebaseWsListenerRequest(role.name.lowercase())
+
         val requestListenerJson = defaultJson.encodeToString<FirebaseWsListenerRequest>(request)
         sendMessage(requestListenerJson)
     }
@@ -71,6 +73,7 @@ class WsClient(
         }
 
         override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
+            Log.e("socketCheck", "onMessage() -> $text")
             wsListener?.onMessage(text)
         }
 
@@ -88,7 +91,7 @@ class WsClient(
             t: Throwable,
             response: Response?,
         ) {
-            Log.e("socketCheck", "onFailure()")
+            Log.e("socketCheck", "onFailure()", t)
             if (shouldReconnect) reconnect()
         }
     }
