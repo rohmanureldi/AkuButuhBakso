@@ -10,4 +10,5 @@ data object LoginDestination
 data class MapDestination(
     val userName: String,
     val userRole: UserRole,
+    val timeStampIdentifier: String = System.currentTimeMillis().toString(),
 )

@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.eldi.akubutuhbakso.presentation.login.LoginScreen
 import com.eldi.akubutuhbakso.presentation.map.MapScreen
 
@@ -38,8 +39,13 @@ fun AppNavigation(
             )
         }
         composable<MapDestination> {
+            val args = it.toRoute<MapDestination>()
             MapScreen(
                 modifier = Modifier.fillMaxSize(),
+                userRole = args.userRole,
+                onBackClick = {
+                    navController.navigateUp()
+                },
             )
         }
     }

@@ -9,9 +9,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocketListener
+import java.util.concurrent.TimeUnit
 
 class WsClient(
-    private val client: OkHttpClient,
     private val socketUrl: String,
 ) {
     private lateinit var webSocket: okhttp3.WebSocket
@@ -19,15 +19,17 @@ class WsClient(
     private var shouldReconnect = false
 
     private fun initWebSocket() {
-        Log.e("socketCheck", "initWebSocket() socketurl = $socketUrl")
         val request = Request.Builder().url(url = socketUrl).build()
         if (wsListener == null) {
             throw NullPointerException("Socket listener is null")
         }
 
+        val client = OkHttpClient.Builder()
+            .readTimeout(0, TimeUnit.MILLISECONDS)
+            .build()
+
         webSocket = client.newWebSocket(request, webSocketListener)
 
-        // this must me done else memory leak will be caused
         client.dispatcher.executorService.shutdown()
     }
 

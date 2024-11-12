@@ -10,4 +10,6 @@
     <string name="label_tnc_desc">Dengan menggunakan aplikasi ini Anda telah setuju untuk membagikan lokasi Anda kepada para tukang Bakso Keliling.</string>
     <string name="label_collapse_dropdown">Collapse dropdown</string>
     <string name="label_expand_dropdown">Expand dropdown</string>
+    <string name="label_warning_map_close">Dengan menutup halaman ini, kamu akan keluar dari pantauan Tukang Bakso</string>
+    <string name="button_ok">OK</string>
 </resources>

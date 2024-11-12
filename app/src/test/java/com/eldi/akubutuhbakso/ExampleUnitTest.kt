@@ -25,7 +25,7 @@ class ExampleUnitTest {
         "b": {
             "p": "bakso/indonesia/seller",
             "d": {
-                "seller1": {
+                "buyer-eldi-1730969202148": {
                     "coord": "123,126",
                     "name": "Ikhsan",
                     "role": "Seller"
