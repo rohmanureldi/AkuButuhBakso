@@ -38,10 +38,7 @@ class MapViewModel(
     private val _userLastLocation = MutableStateFlow<Location?>(null)
     val userLastLocation: StateFlow<Location?> = _userLastLocation
 
-//    private val _onlineUsers = MutableStateFlow<ImmutableList<UserData>>(persistentListOf())
-
     private val _onlineUsers = MutableStateFlow<ImmutableList<UserData>>(persistentListOf())
-//    val onlineUsers: StateFlow<ImmutableList<UserData>> = _onlineUsers
 
     val onlineUsers: StateFlow<ImmutableList<UserData>> = useCase.listenToAllOnlineUsers(args.userName, args.userRole)
         .combine(_onlineUsers) { wsResponse, currentUsers ->
@@ -65,8 +62,6 @@ class MapViewModel(
         } else {
             updateByUserLiveLocation()
         }
-
-//        listenToAllOnlineUsers()
     }
 
     private fun updateByUserCurrentLocation() {
@@ -112,26 +107,6 @@ class MapViewModel(
             }
         }
     }
-
-//    private fun listenToAllOnlineUsers() {
-//        viewModelScope.launch {
-//            useCase.listenToAllOnlineUsers(args.userName, args.userRole).collect { response ->
-//                _onlineUsers.update { currentUsers ->
-//                    when (response) {
-//                        is UserDataType.ListOfUsers -> {
-//                            response.data.toPersistentList()
-//                        }
-//                        is UserDataType.UserAdded -> {
-//                            (currentUsers + response.data).distinctBy { it.timestampId }.toPersistentList()
-//                        }
-//                        is UserDataType.UserDeleted -> {
-//                            currentUsers.filter { it.timestampId != response.userTimestamp }.toPersistentList()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     fun deleteUserLocation() {
         viewModelScope.launch {
