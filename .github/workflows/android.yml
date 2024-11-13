@@ -28,8 +28,12 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-    - name: Decode google-services.json
-      run: echo ${{ secrets.GOOGLE_SERVICES_JSON }} | base64 --decode > app/src/debug/google-services.json
+    - name: Create file
+      run: cat /home/runner/work/AkuButuhBakso/AkuButuhBakso/app/google-services.json | base64
+    - name: Putting data
+      env:
+        DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+      run: echo $DATA > /home/runner/work/<Project-Name>/<Project-Name>/app/google-services.json
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
