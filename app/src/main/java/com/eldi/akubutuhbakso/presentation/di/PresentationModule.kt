@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 val appPresentationModule = module {
     viewModel {
-        MapViewModel(get(), get(), get())
+        MapViewModel(get(), get())
     }
 }

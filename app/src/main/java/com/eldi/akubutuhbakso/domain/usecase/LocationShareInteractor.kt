@@ -1,10 +1,10 @@
 package com.eldi.akubutuhbakso.domain.usecase
 
-import android.location.Location
 import com.eldi.akubutuhbakso.data.LocationShareRepo
 import com.eldi.akubutuhbakso.data.mapper.UserDataMapper
 import com.eldi.akubutuhbakso.domain.models.UserDataType
 import com.eldi.akubutuhbakso.utils.role.UserRole
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -23,7 +23,7 @@ class LocationShareInteractor(
     override suspend fun updateCurrentLocation(
         userName: String,
         role: UserRole,
-        coord: Location,
+        coord: LatLng,
         timeStampIdentifier: String,
     ) {
         repo.updateLocation(

@@ -1,5 +1,6 @@
 package com.eldi.akubutuhbakso.presentation.map
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,10 +34,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.eldi.akubutuhbakso.R
 import com.eldi.akubutuhbakso.presentation.components.CloseMapSheet
 import com.eldi.akubutuhbakso.ui.theme.Paddings
+import com.eldi.akubutuhbakso.utils.locations.getCurrentLocation
+import com.eldi.akubutuhbakso.utils.locations.listenToLocationChange
 import com.eldi.akubutuhbakso.utils.role.UserRole
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -43,9 +49,12 @@ import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -54,6 +63,7 @@ fun MapScreen(
     modifier: Modifier = Modifier,
 ) {
     val vm: MapViewModel = koinViewModel()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val userLastLocation by vm.userLastLocation.collectAsStateWithLifecycle()
     val allOnlineUsers by vm.onlineUsers.collectAsStateWithLifecycle()
@@ -70,6 +80,7 @@ fun MapScreen(
 
     val closeSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+    val fusedProvider: FusedLocationProviderClient = koinInject()
 
     var showBottomSheet by remember {
         mutableStateOf(false)
@@ -108,16 +119,24 @@ fun MapScreen(
     BackHandler(
         onBack = onCloseClick,
     )
-
     LaunchedEffect(userLocation) {
         markerState.position = userLocation
         cameraPositionState.position = CameraPosition.fromLatLngZoom(userLocation, 10f)
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
     LifecycleResumeEffect(Unit, lifecycleOwner = lifecycleOwner) {
-        vm.init()
+        this.lifecycleScope.launch {
+            if (userRole == UserRole.Buyer) {
+                val lastLocation =
+                    getCurrentLocation(fusedProvider).let { LatLng(it.latitude, it.longitude) }
+                vm.updateUserLocation(lastLocation)
+            } else {
+                listenToLocationChange(fusedProvider).collectLatest { location ->
+                    val lastLocation = location.let { LatLng(it.latitude, it.longitude) }
+                    vm.updateUserLocation(lastLocation)
+                }
+            }
+        }
 
         onPauseOrDispose {
             vm.deleteUserLocation()
@@ -138,11 +157,13 @@ fun MapScreen(
             }
 
             allOnlineUsers.forEach {
-                MapMarker(
-                    markerState = MarkerState(position = it.coord),
-                    text = it.name,
-                    iconRes = it.iconRes,
-                )
+                key(it.timestampId) {
+                    MapMarker(
+                        markerState = MarkerState(position = it.coord),
+                        text = it.name,
+                        iconRes = it.iconRes,
+                    )
+                }
             }
         }
 

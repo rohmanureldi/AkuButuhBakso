@@ -50,11 +50,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.okhttp)
 
     implementation(libs.kotlinx.serialization.json)
+    testImplementation(libs.junit.jupiter)
 
     lintChecks(libs.compose.lint.checks)
     testImplementation(libs.junit)
@@ -108,6 +109,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.bundles.mockk)
+    testImplementation(libs.turbine)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

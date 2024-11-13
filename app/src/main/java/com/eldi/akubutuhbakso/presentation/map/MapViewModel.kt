@@ -1,6 +1,5 @@
 package com.eldi.akubutuhbakso.presentation.map
 
-import android.location.Location
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,25 +8,20 @@ import com.eldi.akubutuhbakso.domain.models.UserData
 import com.eldi.akubutuhbakso.domain.models.UserDataType
 import com.eldi.akubutuhbakso.domain.usecase.LocationShareUseCase
 import com.eldi.akubutuhbakso.presentation.navigation.MapDestination
-import com.eldi.akubutuhbakso.utils.locations.getCurrentLocation
-import com.eldi.akubutuhbakso.utils.locations.listenToLocationChange
-import com.eldi.akubutuhbakso.utils.role.UserRole
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MapViewModel(
     private val useCase: LocationShareUseCase,
-    private val locationProvider: FusedLocationProviderClient,
     handle: SavedStateHandle,
 ) : ViewModel() {
     private val args = handle.toRoute<MapDestination>()
@@ -35,74 +29,43 @@ class MapViewModel(
     private val _initialLoading = MutableStateFlow(true)
     val initialLoading: StateFlow<Boolean> = _initialLoading
 
-    private val _userLastLocation = MutableStateFlow<Location?>(null)
-    val userLastLocation: StateFlow<Location?> = _userLastLocation
+    private val _userLastLocation = MutableStateFlow<LatLng?>(null)
+    val userLastLocation: StateFlow<LatLng?> = _userLastLocation
 
-    private val _onlineUsers = MutableStateFlow<ImmutableList<UserData>>(persistentListOf())
+    val onlineUsers: StateFlow<ImmutableList<UserData>> =
+        useCase.listenToAllOnlineUsers(args.userName, args.userRole)
+            .runningFold(persistentListOf<UserData>()) { initial, wsResponse ->
+                when (wsResponse) {
+                    is UserDataType.ListOfUsers -> {
+                        wsResponse.data.toPersistentList()
+                    }
 
-    val onlineUsers: StateFlow<ImmutableList<UserData>> = useCase.listenToAllOnlineUsers(args.userName, args.userRole)
-        .combine(_onlineUsers) { wsResponse, currentUsers ->
-            when (wsResponse) {
-                is UserDataType.ListOfUsers -> {
-                    wsResponse.data.toPersistentList()
-                }
-                is UserDataType.UserAdded -> {
-                    (currentUsers + wsResponse.data).distinctBy { it.timestampId }.toPersistentList()
-                }
-                is UserDataType.UserDeleted -> {
-                    currentUsers.filter { it.timestampId != wsResponse.userTimestamp }.toPersistentList()
+                    is UserDataType.UserAdded -> {
+                        (initial + wsResponse.data).distinctBy { it.timestampId }.toPersistentList()
+                    }
+
+                    is UserDataType.UserDeleted -> {
+                        initial.filter { it.timestampId != wsResponse.timestampId }
+                            .toPersistentList()
+                    }
                 }
             }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), persistentListOf())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(2000L), persistentListOf())
 
-    fun init() {
-        if (args.userRole == UserRole.Buyer) {
-            updateByUserCurrentLocation()
-        } else {
-            updateByUserLiveLocation()
-        }
-    }
-
-    private fun updateByUserCurrentLocation() {
+    fun updateUserLocation(coord: LatLng) {
         viewModelScope.launch {
-            _initialLoading.value = true
-            val lastLocation = getCurrentLocation(
-                locationProvider = locationProvider,
-            )
-
             useCase.updateCurrentLocation(
                 userName = args.userName,
                 role = args.userRole,
-                coord = lastLocation,
+                coord = coord,
                 timeStampIdentifier = args.timeStampIdentifier,
             )
 
             _userLastLocation.update {
-                lastLocation
+                coord
             }
 
-            _initialLoading.value = false
-        }
-    }
-
-    private fun updateByUserLiveLocation() {
-        viewModelScope.launch {
-            _initialLoading.value = true
-
-            listenToLocationChange(
-                locationProvider = locationProvider,
-            ).collectLatest { newLocation ->
-                useCase.updateCurrentLocation(
-                    userName = args.userName,
-                    role = args.userRole,
-                    coord = newLocation,
-                    timeStampIdentifier = args.timeStampIdentifier,
-                )
-
-                _userLastLocation.update {
-                    newLocation
-                }
+            if (_initialLoading.value) {
                 _initialLoading.value = false
             }
         }

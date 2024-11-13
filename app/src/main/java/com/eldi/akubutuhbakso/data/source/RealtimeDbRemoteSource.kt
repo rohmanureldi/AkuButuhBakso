@@ -1,11 +1,11 @@
 package com.eldi.akubutuhbakso.data.source
 
-import android.location.Location
 import android.util.Log
 import com.eldi.akubutuhbakso.data.mapper.UserDataMapper
 import com.eldi.akubutuhbakso.data.model.UserDataResponseType
 import com.eldi.akubutuhbakso.service.WsClient
 import com.eldi.akubutuhbakso.utils.role.UserRole
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -24,24 +24,26 @@ class RealtimeDbRemoteSource(
     override suspend fun updateLocation(
         userName: String,
         role: UserRole,
-        coord: Location,
+        coord: LatLng,
         timeStampIdentifier: String,
     ) {
         runCatching {
-            val myRef = db.getDbReferencePath(
-                username = userName,
-                role = role,
-                timeStampIdentifier = timeStampIdentifier,
-            )
+            withContext(Dispatchers.IO) {
+                val myRef = db.getDbReferencePath(
+                    username = userName,
+                    role = role,
+                    timeStampIdentifier = timeStampIdentifier,
+                )
 
-            myRef.setValue(
-                mapOf(
-                    "coord" to "${coord.latitude},${coord.longitude}",
-                    "name" to userName,
-                    "role" to role.name,
-                    "timestampId" to timeStampIdentifier,
-                ),
-            )
+                myRef.setValue(
+                    mapOf(
+                        "coord" to "${coord.latitude},${coord.longitude}",
+                        "name" to userName,
+                        "role" to role.name,
+                        "timestampId" to timeStampIdentifier,
+                    ),
+                )
+            }
         }.getOrElse {
             Log.e(TAG, "updateLocation: ", it)
         }

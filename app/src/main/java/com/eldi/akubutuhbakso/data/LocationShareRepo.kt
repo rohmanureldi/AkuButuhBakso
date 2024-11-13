@@ -1,15 +1,15 @@
 package com.eldi.akubutuhbakso.data
 
-import android.location.Location
 import com.eldi.akubutuhbakso.data.model.UserDataResponseType
 import com.eldi.akubutuhbakso.utils.role.UserRole
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 
 interface LocationShareRepo {
     suspend fun updateLocation(
         userName: String,
         role: UserRole,
-        coord: Location,
+        coord: LatLng,
         timeStampIdentifier: String,
     )
 
