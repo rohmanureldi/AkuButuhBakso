@@ -57,4 +57,4 @@ jobs:
       run: ./gradlew test
 
     - name: Build & deploy Android release
-      run: bundle exec fastlane submitToFirebaseDistribution
+      run: fastlane submitToFirebaseDistribution
