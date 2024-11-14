@@ -31,6 +31,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+    - name: Set up Ruby and Bundler
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '>= 2.7' # Ensure your Ruby version matches your Fastlane requirements
+        bundler-cache: true # Caches gems for faster builds
+
+    - name: Install Bundler
+      run: gem install bundler
+
     - name: Create google-service.json
       run: cat /home/runner/work/AkuButuhBakso/AkuButuhBakso/app/google-services.json | base64
 
