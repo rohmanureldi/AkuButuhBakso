@@ -17,3 +17,6 @@ local.properties
 /secrets.properties
 /app/lint-baseline.xml
 /.kotlin/errors/*
+/app/google-services.json
+/fastlane/gservice_creds.json
+/fastlane/report.xml
