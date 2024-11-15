@@ -1,4 +1,5 @@
 import java.io.FileInputStream
+import java.util.Locale
 import java.util.Properties
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     id("kotlinx-serialization")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("com.google.gms.google-services")
+    jacoco
 }
 
 val localPropertiesFile = rootProject.file("local.properties")
@@ -16,10 +18,23 @@ if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
 
+jacoco {
+    toolVersion = "0.8.4"
+}
+
+val exclusions = listOf(
+    "**/R.class",
+    "**/R\$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "**/*Test*.*",
+    "**/di/**",
+    "**/ui/**",
+)
+
 android {
     namespace = "com.eldi.akubutuhbakso"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "com.eldi.akubutuhbakso"
         minSdk = 24
@@ -41,6 +56,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -69,6 +88,93 @@ android {
         defaultPropertiesFileName = "local.defaults.properties"
         ignoreList.add("sdk.*")
     }
+
+    applicationVariants.all { variant ->
+        // Extract variant name and capitalize the first letter
+        val variantName = variant.name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        }
+
+        // Define task names for unit tests and Android tests
+        val unitTests = "test${variantName}UnitTest"
+
+        // Register a JacocoReport task for code coverage analysis
+        tasks.register<JacocoReport>("Jacoco${variantName}CodeCoverage") {
+
+        }
+
+        false
+    }
+}
+
+tasks.withType(Test::class) {
+//    useJUnitPlatform()
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+//        useJUnitPlatform()
+    }
+}
+
+tasks.register("jacocoTestReport", JacocoReport::class) {
+    // Depend on unit tests and Android tests tasks
+    dependsOn("testDebugUnitTest")
+    // Set task grouping and description
+    group = "Reporting"
+    description = "Execute UI and unit tests, generate and combine Jacoco coverage report"
+    // Configure reports to generate both XML and HTML formats
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    // Set source directories to the main source directory
+    sourceDirectories.setFrom(layout.projectDirectory.dir("src/main"))
+    // Set class directories to compiled Java and Kotlin classes, excluding specified exclusions
+    classDirectories.setFrom(files(
+        fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+            exclude(exclusions)
+        },
+        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+            exclude(exclusions)
+        }
+    ))
+    // Collect execution data from .exec and .ec files generated during test execution
+    executionData.setFrom(files(
+        fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+    ))
+}
+
+tasks.register("jacocoTestCoverageVerification", JacocoCoverageVerification::class) {
+    dependsOn("jacocoTestReport") // Ensure report is generated before verification
+    group = "Verification"
+    description = "Verify code coverage against defined thresholds"
+
+    violationRules {
+        rule {
+            element = "CLASS" // Check coverage for each class
+            limit {
+                counter = "LINE" // Check line coverage
+                value = "COVEREDRATIO" // Use coverage ratio (0.0 to 1.0)
+                minimum = BigDecimal(0.80) // Set the threshold to 80%
+            }
+        }
+    }
+
+    classDirectories.setFrom(files(
+        fileTree(layout.buildDirectory.dir("intermediates/javac/")) {
+            exclude(exclusions)
+        },
+        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/")) {
+            exclude(exclusions)
+        }
+    ))
+    executionData.setFrom(files(
+        fileTree(layout.buildDirectory) { include(listOf("**/*.exec", "**/*.ec")) }
+    ))
+}
+
+tasks.named("check") {
+    dependsOn("jacocoTestCoverageVerification")
 }
 
 dependencies {
