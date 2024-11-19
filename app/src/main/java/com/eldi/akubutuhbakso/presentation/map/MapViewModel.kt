@@ -41,7 +41,7 @@ class MapViewModel(
                     }
 
                     is UserDataType.UserAdded -> {
-                        (initial + wsResponse.data).distinctBy { it.timestampId }.toPersistentList()
+                        (initial.removeAll { it.timestampId == wsResponse.data.timestampId } + wsResponse.data).distinctBy { it.timestampId }.toPersistentList()
                     }
 
                     is UserDataType.UserDeleted -> {
