@@ -12,4 +12,8 @@
     <string name="label_expand_dropdown">Expand dropdown</string>
     <string name="label_warning_map_close">Dengan menutup halaman ini, kamu akan keluar dari pantauan Tukang Bakso</string>
     <string name="button_ok">OK</string>
+    <string name="label_login_name_helper">Harus lebih dari 2 karakter</string>
+    <string name="label_location_permission_denied_title">Akses lokasi ditolak</string>
+    <string name="label_location_permission_denied_desc">Harap mengizinkan akses lokasi</string>
+    <string name="label_open_setting">Buka Pengaturan</string>
 </resources>
