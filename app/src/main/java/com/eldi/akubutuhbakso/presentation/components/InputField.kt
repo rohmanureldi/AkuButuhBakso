@@ -19,6 +19,8 @@ fun InputField(
     text: String = "",
     placeholder: String = "Placeholder",
     onTextChange: (String) -> Unit = {},
+    isError: Boolean = false,
+    supportingText: @Composable () -> Unit = {},
 ) {
     Column(modifier = modifier) {
         Text(
@@ -34,9 +36,11 @@ fun InputField(
                 Text(placeholder, color = Color.LightGray)
             },
             colors = OutlinedTextFieldDefaults.colors().copy(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.DarkGray,
                 unfocusedIndicatorColor = Color.LightGray,
             ),
+            isError = isError,
+            supportingText = supportingText,
         )
     }
 }
