@@ -4,18 +4,15 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.eldi.akubutuhbakso.R
+import com.eldi.akubutuhbakso.presentation.components.CircleButton
 import com.eldi.akubutuhbakso.presentation.components.CloseMapSheet
 import com.eldi.akubutuhbakso.ui.theme.Paddings
 import com.eldi.akubutuhbakso.utils.locations.getCurrentLocation
@@ -167,12 +165,18 @@ fun MapScreen(
             }
         }
 
-        CloseButton(
+        CircleButton(
             modifier = Modifier
                 .statusBarsPadding()
                 .align(Alignment.TopEnd)
                 .padding(Paddings.small),
             onCloseClick = onCloseClick,
+            iconContent = {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = null,
+                )
+            },
         )
 
         if (initialLoading) {
@@ -189,29 +193,6 @@ fun MapScreen(
                 },
                 onCloseOk = onCloseOk,
                 onCloseCancel = onCloseCancel,
-            )
-        }
-    }
-}
-
-@Composable
-private fun BoxScope.CloseButton(
-    modifier: Modifier = Modifier,
-    onCloseClick: () -> Unit,
-) {
-    Surface(
-        shape = CircleShape,
-        modifier = modifier
-            .statusBarsPadding()
-            .align(Alignment.TopEnd)
-            .padding(Paddings.small),
-    ) {
-        IconButton(
-            onClick = onCloseClick,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = null,
             )
         }
     }
