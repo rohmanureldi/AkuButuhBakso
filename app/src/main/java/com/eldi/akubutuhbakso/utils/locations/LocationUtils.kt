@@ -10,7 +10,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.eldi.akubutuhbakso.utils.findActivity
@@ -57,19 +56,15 @@ suspend fun getCurrentLocation(
 @Composable
 inline fun requestLocationPermissionLauncher(
     crossinline onGranted: () -> Unit,
+    crossinline onDenied: () -> Unit,
 ): ManagedActivityResultLauncher<String, Boolean> {
-    val context = LocalContext.current
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             if (isGranted) {
                 onGranted()
             } else {
-                Toast.makeText(
-                    context,
-                    "Please allow location permission to continue",
-                    Toast.LENGTH_SHORT,
-                ).show()
+                onDenied()
             }
         },
     )
@@ -94,6 +89,11 @@ inline fun requestLocationPermissions(
             activity,
             Manifest.permission.ACCESS_FINE_LOCATION,
         ) -> {
+            Toast.makeText(
+                context,
+                "Harap mengizinkan akses lokasi untuk melanjutkan",
+                Toast.LENGTH_SHORT,
+            ).show()
             launcher.launch(permission)
         }
 
